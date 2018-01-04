@@ -1,8 +1,23 @@
 
-const extend = require('../util/extend');
-const unbundle = require('../util/unbundle_jsonlint');
-const {isExpression} = require('../expression');
-const {isFunction} = require('../function');
+import extend from '../util/extend';
+import unbundle from '../util/unbundle_jsonlint';
+import {isExpression} from '../expression';
+import {isFunction} from '../function';
+
+import validateArray from './validate_array';
+import validateBoolean from './validate_boolean';
+import validateNumber from './validate_number';
+import validateColor from './validate_color';
+import validateConstants from './validate_constants';
+import validateEnum from './validate_enum';
+import validateFilter from './validate_filter';
+import validateFunction from './validate_function';
+import validateLayer from './validate_layer';
+import validateObject from './validate_object';
+import validateSource from './validate_source';
+import validateLight from './validate_light';
+import validateString from './validate_string';
+import validateExpression from './validate_expression';
 
 // Main recursive validation function. Tracks:
 //
@@ -14,28 +29,25 @@ const {isFunction} = require('../function');
 // - valueSpec: current spec being evaluated. Tracks value.
 // - styleSpec: current full spec being evaluated.
 
-module.exports = function validate(options) {
+export default function validate(options) {
 
-    const validateFunction = require('./validate_function');
-    const validateExpression = require('./validate_expression');
-    const validateObject = require('./validate_object');
     const VALIDATORS = {
         '*': function() {
             return [];
         },
-        'array': require('./validate_array'),
-        'boolean': require('./validate_boolean'),
-        'number': require('./validate_number'),
-        'color': require('./validate_color'),
-        'constants': require('./validate_constants'),
-        'enum': require('./validate_enum'),
-        'filter': require('./validate_filter'),
-        'function': require('./validate_function'),
-        'layer': require('./validate_layer'),
-        'object': require('./validate_object'),
-        'source': require('./validate_source'),
-        'light': require('./validate_light'),
-        'string': require('./validate_string')
+        'array': validateArray,
+        'boolean': validateBoolean,
+        'number': validateNumber,
+        'color': validateColor,
+        'constants': validateConstants,
+        'enum': validateEnum,
+        'filter': validateFilter,
+        'function': validateFunction,
+        'layer': validateLayer,
+        'object': validateObject,
+        'source': validateSource,
+        'light': validateLight,
+        'string': validateString
     };
 
     const value = options.value;

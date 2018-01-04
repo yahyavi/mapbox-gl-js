@@ -6,7 +6,7 @@ import unassert from 'rollup-plugin-unassert';
 
 export default [
     {
-        input: 'src/style-spec/expression/index.js',
+        input: 'src/style-spec/validate/validate.js',
         output: {
             name: 'mapboxgl',
             file: 'mapboxgl-rollup.js',

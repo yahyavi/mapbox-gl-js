@@ -7,9 +7,14 @@ import Literal from './definitions/literal';
 import Assertion from './definitions/assertion';
 import ArrayAssertion from './definitions/array';
 import Coercion from './definitions/coercion';
+import EvaluationContext from './evaluation_context';
 
 import type {Expression} from './expression';
 import type {Type} from './types';
+
+import {CompoundExpression} from './compound_expression';
+import {isGlobalPropertyConstant, isFeatureConstant} from './is_constant';
+import Var from './definitions/var';
 
 /**
  * State associated parsing at a given point in an expression tree.
@@ -112,7 +117,7 @@ class ParsingContext {
                 // it immediately and replace it with a literal value in the
                 // parsed/compiled result.
                 if (!(parsed instanceof Literal) && isConstant(parsed)) {
-                    const ec = new (require('./evaluation_context'))();
+                    const ec = new EvaluationContext();
                     try {
                         parsed = new Literal(parsed.type, parsed.evaluate(ec));
                     } catch (e) {
@@ -181,9 +186,6 @@ export default ParsingContext;
 
 function isConstant(expression: Expression) {
     // requires within function body to workaround circular dependency
-    const {CompoundExpression} = require('./compound_expression');
-    const {isGlobalPropertyConstant, isFeatureConstant} = require('./is_constant');
-    const Var = require('./definitions/var');
 
     if (expression instanceof Var) {
         return false;
