@@ -1,10 +1,10 @@
 // @flow
 
-const {
+import {
     ValueType,
-    BooleanType,
-} = require('../types');
-const {toString} = require('../types');
+    BooleanType
+} from '../types';
+import {toString} from '../types';
 
 import type { Expression } from '../expression';
 import type EvaluationContext from '../evaluation_context';
@@ -80,4 +80,4 @@ class Equals implements Expression {
     }
 }
 
-module.exports = Equals;
+export default Equals;

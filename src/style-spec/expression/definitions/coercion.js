@@ -1,14 +1,14 @@
 // @flow
 
-const assert = require('assert');
-const {
+import assert from 'assert';
+import {
     ColorType,
     ValueType,
     NumberType,
-} = require('../types');
+} from '../types';
 
-const { Color, validateRGBA } = require('../values');
-const RuntimeError = require('../runtime_error');
+import { Color, validateRGBA } from '../values';
+import RuntimeError from '../runtime_error';
 
 import type { Expression } from '../expression';
 import type ParsingContext from '../parsing_context';
@@ -99,4 +99,4 @@ class Coercion implements Expression {
     }
 }
 
-module.exports = Coercion;
+export default Coercion;

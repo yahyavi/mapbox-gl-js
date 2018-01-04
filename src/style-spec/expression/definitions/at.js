@@ -1,12 +1,12 @@
 // @flow
 
-const {
+import {
     array,
     ValueType,
     NumberType
-} = require('../types');
+} from '../types';
 
-const RuntimeError = require('../runtime_error');
+import RuntimeError from '../runtime_error';
 
 import type { Expression } from '../expression';
 import type ParsingContext from '../parsing_context';
@@ -63,4 +63,4 @@ class At implements Expression {
     }
 }
 
-module.exports = At;
+export default At;

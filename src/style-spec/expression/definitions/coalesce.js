@@ -1,7 +1,7 @@
 // @flow
 
-const assert = require('assert');
-const {checkSubtype, ValueType} = require('../types');
+import assert from 'assert';
+import {checkSubtype, ValueType} from '../types';
 
 import type { Expression } from '../expression';
 import type ParsingContext from '../parsing_context';
@@ -67,4 +67,4 @@ class Coalesce implements Expression {
     }
 }
 
-module.exports = Coalesce;
+export default Coalesce;

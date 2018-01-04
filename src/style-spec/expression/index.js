@@ -1,19 +1,19 @@
 // @flow
 
-const assert = require('assert');
-const extend = require('../util/extend');
-const ParsingError = require('./parsing_error');
-const ParsingContext = require('./parsing_context');
-const EvaluationContext = require('./evaluation_context');
-const {CompoundExpression} = require('./compound_expression');
-const Step = require('./definitions/step');
-const Interpolate = require('./definitions/interpolate');
-const Coalesce = require('./definitions/coalesce');
-const Let = require('./definitions/let');
-const definitions = require('./definitions');
-const isConstant = require('./is_constant');
-const RuntimeError = require('./runtime_error');
-const {success, error} = require('../util/result');
+import assert from 'assert';
+import extend from '../util/extend';
+import ParsingError from './parsing_error';
+import ParsingContext from './parsing_context';
+import EvaluationContext from './evaluation_context';
+import {CompoundExpression} from './compound_expression';
+import Step from './definitions/step';
+import Interpolate from './definitions/interpolate';
+import Coalesce from './definitions/coalesce';
+import Let from './definitions/let';
+import definitions from './definitions/index';
+import {isFeatureConstant, isGlobalPropertyConstant} from './is_constant';
+import RuntimeError from './runtime_error';
+import {success, error} from '../util/result';
 
 import type {Type} from './types';
 import type {Value} from './values';
@@ -210,12 +210,12 @@ function createPropertyExpression(expression: mixed,
 
     const parsed = expression.value.expression;
 
-    const isFeatureConstant = isConstant.isFeatureConstant(parsed);
+    const isFeatureConstant = isFeatureConstant(parsed);
     if (!isFeatureConstant && !propertySpec['property-function']) {
         return error([new ParsingError('', 'property expressions not supported')]);
     }
 
-    const isZoomConstant = isConstant.isGlobalPropertyConstant(parsed, ['zoom']);
+    const isZoomConstant = isGlobalPropertyConstant(parsed, ['zoom']);
     if (!isZoomConstant && propertySpec['zoom-function'] === false) {
         return error([new ParsingError('', 'zoom expressions not supported')]);
     }
@@ -240,8 +240,8 @@ function createPropertyExpression(expression: mixed,
         (new ZoomDependentExpression('composite', expression.value, zoomCurve): CompositeExpression));
 }
 
-const {isFunction, createFunction} = require('../function');
-const {Color} = require('./values');
+import {isFunction, createFunction} from '../function/index';
+import {Color} from './values';
 
 // serialization wrapper for old-style stop functions normalized to the
 // expression interface
@@ -296,7 +296,7 @@ function normalizePropertyExpression<T>(value: PropertyValueSpecification<T>, sp
     }
 }
 
-module.exports = {
+export {
     StyleExpression,
     StyleExpressionWithErrorHandling,
     isExpression,
@@ -349,14 +349,14 @@ function findZoomCurve(expression: Expression): Step | Interpolate | ParsingErro
     return result;
 }
 
-const {
+import {
     ColorType,
     StringType,
     NumberType,
     BooleanType,
     ValueType,
     array
-} = require('./types');
+} from './types';
 
 function getExpectedType(spec: StylePropertySpecification): Type | null {
     const types = {

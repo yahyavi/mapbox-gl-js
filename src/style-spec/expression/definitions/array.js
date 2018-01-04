@@ -1,6 +1,6 @@
 // @flow
 
-const {
+import {
     toString,
     array,
     ValueType,
@@ -8,10 +8,10 @@ const {
     NumberType,
     BooleanType,
     checkSubtype
-} = require('../types');
+} from '../types';
 
-const {typeOf} = require('../values');
-const RuntimeError = require('../runtime_error');
+import {typeOf} from '../values';
+import RuntimeError from '../runtime_error';
 
 import type { Expression } from '../expression';
 import type ParsingContext from '../parsing_context';
@@ -85,4 +85,4 @@ class ArrayAssertion implements Expression {
     }
 }
 
-module.exports = ArrayAssertion;
+export default ArrayAssertion;

@@ -1,7 +1,7 @@
 // @flow
 
-const Color = require('./color');
-const interpolateNumber = require('./interpolate').number;
+import Color from './color';
+import interpolate from './interpolate';
 
 type LABColor = {
     l: number,
@@ -80,10 +80,10 @@ function labToRgb(labColor: LABColor): Color {
 
 function interpolateLab(from: LABColor, to: LABColor, t: number) {
     return {
-        l: interpolateNumber(from.l, to.l, t),
-        a: interpolateNumber(from.a, to.a, t),
-        b: interpolateNumber(from.b, to.b, t),
-        alpha: interpolateNumber(from.alpha, to.alpha, t)
+        l: interpolate.number(from.l, to.l, t),
+        a: interpolate.number(from.a, to.a, t),
+        b: interpolate.number(from.b, to.b, t),
+        alpha: interpolate.number(from.alpha, to.alpha, t)
     };
 }
 
@@ -119,13 +119,13 @@ function interpolateHue(a: number, b: number, t: number) {
 function interpolateHcl(from: HCLColor, to: HCLColor, t: number) {
     return {
         h: interpolateHue(from.h, to.h, t),
-        c: interpolateNumber(from.c, to.c, t),
-        l: interpolateNumber(from.l, to.l, t),
-        alpha: interpolateNumber(from.alpha, to.alpha, t)
+        c: interpolate.number(from.c, to.c, t),
+        l: interpolate.number(from.l, to.l, t),
+        alpha: interpolate.number(from.alpha, to.alpha, t)
     };
 }
 
-module.exports = {
+const colorSpaces = {
     lab: {
         forward: rgbToLab,
         reverse: labToRgb,
@@ -137,3 +137,5 @@ module.exports = {
         interpolate: interpolateHcl
     }
 };
+
+export default colorSpaces;

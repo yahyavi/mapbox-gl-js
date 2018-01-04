@@ -8,12 +8,13 @@ function unbundle(value) {
     }
 }
 
-function deepUnbundle(value) {
+function unbundleDeep(value) {
     if (Array.isArray(value)) {
-        return value.map(deepUnbundle);
+        return value.map(unbundleDeep);
     }
     return unbundle(value);
 }
 
-module.exports = unbundle;
-module.exports.deep = deepUnbundle;
+unbundle.deep = unbundleDeep;
+
+export default unbundle;

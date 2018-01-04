@@ -17,7 +17,7 @@ function error<T, E>(value: E): Result<T, E> {
     return { result: 'error', value };
 }
 
-module.exports = {
+export {
     success,
     error
 };

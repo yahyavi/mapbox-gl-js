@@ -92,7 +92,7 @@ function checkSubtype(expected: Type, t: Type): ?string {
     return `Expected ${toString(expected)} but found ${toString(t)} instead.`;
 }
 
-module.exports = {
+export {
     NullType,
     NumberType,
     StringType,

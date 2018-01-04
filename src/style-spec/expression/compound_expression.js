@@ -1,9 +1,9 @@
 // @flow
 
-const { toString } = require('./types');
-const ParsingContext = require('./parsing_context');
-const EvaluationContext = require('./evaluation_context');
-const assert = require('assert');
+import { toString } from './types';
+import ParsingContext from './parsing_context';
+import EvaluationContext from './evaluation_context';
+import assert from 'assert';
 
 import type { Expression } from './expression';
 import type { Type } from './types';
@@ -145,7 +145,7 @@ function stringifySignature(signature: Signature): string {
     }
 }
 
-module.exports = {
+export {
     CompoundExpression,
     varargs
 };
