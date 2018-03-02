@@ -34,7 +34,15 @@ export function queryRenderedFeatures(sourceCache: SourceCache,
         });
     }
 
-    return mergeRenderedFeatureLayers(renderedFeatureLayers);
+    const result = mergeRenderedFeatureLayers(renderedFeatureLayers);
+
+    // Merge state from SourceCache into the results
+    for (const layerID in result) {
+        result[layerID].forEach((feature) => {
+            feature.state = sourceCache.getFeatureState(feature.id);
+        });
+    }
+    return result;
 }
 
 export function querySourceFeatures(sourceCache: SourceCache, params: any) {
