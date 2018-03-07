@@ -158,11 +158,11 @@ class LineBucket implements Bucket {
     addLine(vertices: Array<Point>, feature: VectorTileFeature, join: string, cap: string, miterLimit: number, roundLimit: number) {
         let lineDistances = null;
         if (!!feature.properties &&
-            feature.properties.hasOwnProperty('$distance_total') &&
-            feature.properties.hasOwnProperty('$distance_start')) {
+            feature.properties.hasOwnProperty('$distance_start') &&
+            feature.properties.hasOwnProperty('$distance_end')) {
             lineDistances = {
-                total: feature.properties.$distance_total,
-                start: feature.properties.$distance_start
+                start: feature.properties.$distance_start,
+                end: feature.properties.$distance_end
             };
         }
 
@@ -180,6 +180,10 @@ class LineBucket implements Bucket {
 
         // Ignore invalid geometry.
         if (len < (isPolygon ? 3 : 2)) return;
+
+        if (lineDistances) {
+            lineDistances.tile_total = calculateFullDistance(vertices, first, len);
+        }
 
         if (join === 'bevel') miterLimit = 1.05;
 
@@ -534,7 +538,7 @@ class LineBucket implements Bucket {
     }
 
     scaleDistance(tileDistance: number, stats: Object) {
-        return (stats.start + tileDistance) * ((MAX_LINE_DISTANCE - 1) / stats.total);
+        return ((tileDistance / stats.tile_total) * (stats.end - stats.start) + stats.start) * (MAX_LINE_DISTANCE - 1);
     }
 
     shouldClipAtEdge(vertex: Point, distance: number): boolean {
@@ -545,6 +549,17 @@ class LineBucket implements Bucket {
         if (distance === 0 || distance === MAX_LINE_DISTANCE - 1) return false;
         return vertex.x === 0 || vertex.x === EXTENT || vertex.y === 0 || vertex.y === EXTENT;
     }
+}
+
+function calculateFullDistance(vertices: Array<Point>, first: number, len: number) {
+    let currentVertex, nextVertex;
+    let total = 0;
+    for (let i = first; i < len - 1; i++) {
+        currentVertex = vertices[i];
+        nextVertex = vertices[i + 1];
+        total += currentVertex.dist(nextVertex);
+    }
+    return total;
 }
 
 register('LineBucket', LineBucket, {omit: ['layers']});
