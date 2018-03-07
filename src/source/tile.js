@@ -217,9 +217,8 @@ class Tile {
     upload(context: Context) {
         for (const id in this.buckets) {
             const bucket = this.buckets[id];
-            if (!bucket.uploaded) {
+            if (bucket.uploadPending()) {
                 bucket.upload(context);
-                bucket.uploaded = true;
             }
         }
 
