@@ -7,21 +7,20 @@ const Map = require('../../../../src/ui/map');
 const DOM = require('../../../../src/util/dom');
 const simulate = require('mapbox-gl-js-test/simulate_interaction');
 
-function createMap() {
+function createMap(t) {
+    t.stub(Map.prototype, '_detectMissingCSS');
     return new Map({ container: DOM.create('div', '', window.document.body) });
 }
 
 test('Map#isZooming returns false by default', (t) => {
-    t.stub(console, 'warn');
-    const map = createMap();
+    const map = createMap(t);
     t.equal(map.isZooming(), false);
     map.remove();
     t.end();
 });
 
 test('Map#isZooming returns true during a camera zoom animation', (t) => {
-    t.stub(console, 'warn');
-    const map = createMap();
+    const map = createMap(t);
 
     map.on('zoomstart', () => {
         t.equal(map.isZooming(), true);
@@ -37,8 +36,7 @@ test('Map#isZooming returns true during a camera zoom animation', (t) => {
 });
 
 test('Map#isZooming returns true when scroll zooming', (t) => {
-    t.stub(console, 'warn');
-    const map = createMap();
+    const map = createMap(t);
 
     map.on('zoomstart', () => {
         t.equal(map.isZooming(), true);
@@ -61,8 +59,7 @@ test('Map#isZooming returns true when scroll zooming', (t) => {
 });
 
 test('Map#isZooming returns true when double-click zooming', (t) => {
-    t.stub(console, 'warn');
-    const map = createMap();
+    const map = createMap(t);
 
     map.on('zoomstart', () => {
         t.equal(map.isZooming(), true);

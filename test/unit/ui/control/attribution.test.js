@@ -1,16 +1,14 @@
 'use strict';
 
 const test = require('mapbox-gl-js-test').test;
-const window = require('../../../../src/util/window');
-const Map = require('../../../../src/ui/map');
 const config = require('../../../../src/util/config');
 const AttributionControl = require('../../../../src/ui/control/attribution_control');
+const globalCreateMap = require('../../../util').createMap;
 
-function createMap() {
-    const container = window.document.createElement('div');
+function createMap(t) {
     config.ACCESS_TOKEN = 'pk.123';
-    return new Map({
-        container: container,
+
+    return globalCreateMap(t, {
         attributionControl: false,
         style: {
             version: 8,
@@ -21,12 +19,10 @@ function createMap() {
         },
         hash: true
     });
-
 }
 
 test('AttributionControl appears in bottom-right by default', (t) => {
-    t.stub(console, 'warn');
-    const map = createMap();
+    const map = createMap(t);
     map.addControl(new AttributionControl());
 
     t.equal(map.getContainer().querySelectorAll('.mapboxgl-ctrl-bottom-right .mapboxgl-ctrl-attrib').length, 1);
@@ -34,8 +30,7 @@ test('AttributionControl appears in bottom-right by default', (t) => {
 });
 
 test('AttributionControl appears in the position specified by the position option', (t) => {
-    t.stub(console, 'warn');
-    const map = createMap();
+    const map = createMap(t);
     map.addControl(new AttributionControl(), 'top-left');
 
     t.equal(map.getContainer().querySelectorAll('.mapboxgl-ctrl-top-left .mapboxgl-ctrl-attrib').length, 1);
@@ -43,8 +38,7 @@ test('AttributionControl appears in the position specified by the position optio
 });
 
 test('AttributionControl appears in compact mode if compact option is used', (t) => {
-    t.stub(console, 'warn');
-    const map = createMap();
+    const map = createMap(t);
     Object.defineProperty(map.getCanvasContainer(), 'offsetWidth', {value: 700, configurable: true});
 
     let attributionControl = new AttributionControl({
@@ -68,8 +62,7 @@ test('AttributionControl appears in compact mode if compact option is used', (t)
 });
 
 test('AttributionControl appears in compact mode if container is less then 640 pixel wide', (t) => {
-    t.stub(console, 'warn');
-    const map = createMap();
+    const map = createMap(t);
     Object.defineProperty(map.getCanvasContainer(), 'offsetWidth', {value: 700, configurable: true});
     map.addControl(new AttributionControl());
 
@@ -85,8 +78,7 @@ test('AttributionControl appears in compact mode if container is less then 640 p
 });
 
 test('AttributionControl dedupes attributions that are substrings of others', (t) => {
-    t.stub(console, 'warn');
-    const map = createMap();
+    const map = createMap(t);
     const attribution = new AttributionControl();
     map.addControl(attribution);
 
@@ -111,8 +103,7 @@ test('AttributionControl dedupes attributions that are substrings of others', (t
 });
 
 test('AttributionControl has the correct edit map link', (t) => {
-    t.stub(console, 'warn');
-    const map = createMap();
+    const map = createMap(t);
     const attribution = new AttributionControl();
     map.addControl(attribution);
     map.on('load', () => {
@@ -129,8 +120,7 @@ test('AttributionControl has the correct edit map link', (t) => {
 });
 
 test('AttributionControl is hidden if empty', (t) => {
-    t.stub(console, 'warn');
-    const map = createMap();
+    const map = createMap(t);
     const attribution = new AttributionControl();
     map.addControl(attribution);
     map.on('load', () => {

@@ -3,7 +3,7 @@
 const test = require('mapbox-gl-js-test').test;
 const Hash = require('../../../src/ui/hash');
 const window = require('../../../src/util/window');
-const Map = require('../../../src/ui/map');
+const globalCreateMap = require('../../util').createMap;
 
 test('hash', (t) => {
     function createHash() {
@@ -12,17 +12,16 @@ test('hash', (t) => {
         return hash;
     }
 
-    function createMap() {
+    function createMap(t) {
         const container = window.document.createElement('div');
         Object.defineProperty(container, 'offsetWidth', {value: 512});
         Object.defineProperty(container, 'offsetHeight', {value: 512});
-        return new Map({container: container});
+        return globalCreateMap(t, {container: container});
     }
 
 
     t.test('#addTo', (t) => {
-        t.stub(console, 'warn');
-        const map = createMap();
+        const map = createMap(t);
         const hash = createHash();
 
         t.notok(hash._map);
@@ -34,8 +33,7 @@ test('hash', (t) => {
     });
 
     t.test('#remove', (t) => {
-        t.stub(console, 'warn');
-        const map = createMap();
+        const map = createMap(t);
         const hash = createHash()
             .addTo(map);
 
@@ -48,8 +46,7 @@ test('hash', (t) => {
     });
 
     t.test('#_onHashChange', (t) => {
-        t.stub(console, 'warn');
-        const map = createMap();
+        const map = createMap(t);
         const hash = createHash()
             .addTo(map);
 
@@ -79,8 +76,7 @@ test('hash', (t) => {
     });
 
     t.test('#_onHashChange empty', (t) => {
-        t.stub(console, 'warn');
-        const map = createMap();
+        const map = createMap(t);
         const hash = createHash()
             .addTo(map);
 
@@ -112,8 +108,7 @@ test('hash', (t) => {
             return window.location.hash.split('/');
         }
 
-        t.stub(console, 'warn');
-        const map = createMap();
+        const map = createMap(t);
         createHash()
             .addTo(map);
 

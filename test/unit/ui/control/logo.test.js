@@ -1,13 +1,10 @@
 'use strict';
 const test = require('mapbox-gl-js-test').test;
 const VectorTileSource = require('../../../../src/source/vector_tile_source');
-const window = require('../../../../src/util/window');
-const Map = require('../../../../src/ui/map');
+const globalCreateMap = require('../../../util').createMap;
 
-function createMap(logoPosition, logoRequired) {
-    const container = window.document.createElement('div');
-    return new Map({
-        container: container,
+function createMap(t, logoPosition, logoRequired) {
+    return globalCreateMap(t, {
         style: {
             version: 8,
             sources: {
@@ -39,8 +36,7 @@ function createSource(options, logoRequired) {
     return source;
 }
 test('LogoControl appears in bottom-left by default', (t) => {
-    t.stub(console, 'warn');
-    const map = createMap();
+    const map = createMap(t);
     map.on('load', () => {
         t.equal(map.getContainer().querySelectorAll(
             '.mapboxgl-ctrl-bottom-left .mapboxgl-ctrl-logo'
@@ -50,8 +46,7 @@ test('LogoControl appears in bottom-left by default', (t) => {
 });
 
 test('LogoControl appears in the position specified by the position option', (t) => {
-    t.stub(console, 'warn');
-    const map = createMap('top-left');
+    const map = createMap(t, 'top-left');
     map.on('load', () => {
         t.equal(map.getContainer().querySelectorAll(
             '.mapboxgl-ctrl-top-left .mapboxgl-ctrl-logo'
@@ -61,16 +56,14 @@ test('LogoControl appears in the position specified by the position option', (t)
 });
 
 test('LogoControl is not displayed when the mapbox_logo property is false', (t) => {
-    t.stub(console, 'warn');
-    const map = createMap('top-left', false);
+    const map = createMap(t, 'top-left', false);
     map.on('load', () => {
         t.equal(map.getContainer().querySelectorAll('.mapboxgl-ctrl-top-left > .mapboxgl-ctrl')[0].style.display, 'none');
         t.end();
     });
 });
 test('LogoControl is not added more than once', (t)=>{
-    t.stub(console, 'warn');
-    const map = createMap();
+    const map = createMap(t);
     const source = createSource({
         minzoom: 1,
         maxzoom: 10,

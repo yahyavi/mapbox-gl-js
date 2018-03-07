@@ -2,21 +2,21 @@
 
 const test = require('mapbox-gl-js-test').test;
 const browser = require('../../../../src/util/browser');
-const util = require('../../../../src/util/util');
 const window = require('../../../../src/util/window');
 const Map = require('../../../../src/ui/map');
 const DOM = require('../../../../src/util/dom');
 const simulate = require('mapbox-gl-js-test/simulate_interaction');
 
-function createMap(options) {
-    return new Map(util.extend({
+function createMap(t) {
+    t.stub(Map.prototype, '_detectMissingCSS');
+    return new Map({
         container: DOM.create('div', '', window.document.body),
         style: {
             "version": 8,
             "sources": {},
             "layers": []
         }
-    }, options));
+    });
 }
 
 test('ScrollZoomHandler', (t) => {
@@ -25,8 +25,7 @@ test('ScrollZoomHandler', (t) => {
     browserNow.callsFake(() => now);
 
     t.test('Zooms for single mouse wheel tick', (t) => {
-        t.stub(console, 'warn');
-        const map = createMap();
+        const map = createMap(t);
         map._updateCamera();
 
         // simulate a single 'wheel' event
@@ -45,8 +44,7 @@ test('ScrollZoomHandler', (t) => {
     });
 
     t.test('Zooms for single mouse wheel tick with non-magical deltaY', (t) => {
-        t.stub(console, 'warn');
-        const map = createMap();
+        const map = createMap(t);
         map._updateCamera();
 
         // Simulate a single 'wheel' event without the magical deltaY value.
@@ -60,8 +58,7 @@ test('ScrollZoomHandler', (t) => {
     });
 
     t.test('Zooms for multiple mouse wheel ticks', (t) => {
-        t.stub(console, 'warn');
-        const map = createMap();
+        const map = createMap(t);
 
         map._updateCamera();
         const startZoom = map.getZoom();
@@ -99,8 +96,7 @@ test('ScrollZoomHandler', (t) => {
     });
 
     t.test('Gracefully ignores wheel events with deltaY: 0', (t) => {
-        t.stub(console, 'warn');
-        const map = createMap();
+        const map = createMap(t);
         map._updateCamera();
 
         const startZoom = map.getZoom();
@@ -120,8 +116,7 @@ test('ScrollZoomHandler', (t) => {
     });
 
     test('does not zoom if preventDefault is called on the wheel event', (t) => {
-        t.stub(console, 'warn');
-        const map = createMap();
+        const map = createMap(t);
 
         map.on('wheel', e => e.preventDefault());
 

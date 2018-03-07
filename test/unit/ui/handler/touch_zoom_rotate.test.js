@@ -6,13 +6,13 @@ const Map = require('../../../../src/ui/map');
 const DOM = require('../../../../src/util/dom');
 const simulate = require('mapbox-gl-js-test/simulate_interaction');
 
-function createMap() {
+function createMap(t) {
+    t.stub(Map.prototype, '_detectMissingCSS');
     return new Map({ container: DOM.create('div', '', window.document.body) });
 }
 
 test('TouchZoomRotateHandler fires zoomstart, zoom, and zoomend events at appropriate times in response to a pinch-zoom gesture', (t) => {
-    t.stub(console, 'warn');
-    const map = createMap();
+    const map = createMap(t);
 
     const zoomstart = t.spy();
     const zoom      = t.spy();
@@ -51,8 +51,7 @@ test('TouchZoomRotateHandler fires zoomstart, zoom, and zoomend events at approp
 });
 
 test('TouchZoomRotateHandler fires rotatestart, rotate, and rotateend events at appropriate times in response to a pinch-rotate gesture', (t) => {
-    t.stub(console, 'warn');
-    const map = createMap();
+    const map = createMap(t);
 
     const rotatestart = t.spy();
     const rotate      = t.spy();
@@ -91,8 +90,7 @@ test('TouchZoomRotateHandler fires rotatestart, rotate, and rotateend events at 
 });
 
 test('TouchZoomRotateHandler does not begin a gesture if preventDefault is called on the touchstart event', (t) => {
-    t.stub(console, 'warn');
-    const map = createMap();
+    const map = createMap(t);
 
     map.on('touchstart', e => e.preventDefault());
 

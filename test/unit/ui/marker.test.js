@@ -2,17 +2,17 @@
 
 const test = require('mapbox-gl-js-test').test;
 const window = require('../../../src/util/window');
-const Map = require('../../../src/ui/map');
 const Marker = require('../../../src/ui/marker');
 const Popup = require('../../../src/ui/popup');
 const LngLat = require('../../../src/geo/lng_lat');
+const globalCreateMap = require('../../util').createMap;
 const Point = require('@mapbox/point-geometry');
 
-function createMap() {
+function createMap(t) {
     const container = window.document.createElement('div');
     Object.defineProperty(container, 'offsetWidth', {value: 512});
     Object.defineProperty(container, 'offsetHeight', {value: 512});
-    return new Map({container: container});
+    return globalCreateMap(t, {container: container});
 }
 
 test('Marker', (t) => {
@@ -45,8 +45,7 @@ test('Marker', (t) => {
     });
 
     t.test('marker is added to map', (t) => {
-        t.stub(console, 'warn');
-        const map = createMap();
+        const map = createMap(t);
         const marker = new Marker(window.document.createElement('div')).setLngLat([-77.01866, 38.888]);
         t.ok(marker.addTo(map) instanceof Marker, 'marker.addTo(map) returns Marker instance');
         t.ok(marker._map, 'marker instance is bound to map instance');
@@ -54,8 +53,7 @@ test('Marker', (t) => {
     });
 
     t.test('marker\'s lngLat can be changed', (t) => {
-        t.stub(console, 'warn');
-        const map = createMap();
+        const map = createMap(t);
         const marker = new Marker(window.document.createElement('div')).setLngLat([-77.01866, 38.888]).addTo(map);
         t.ok(marker.setLngLat([-76, 39]) instanceof Marker, 'marker.setLngLat() returns Marker instance');
         const markerLngLat = marker.getLngLat();
@@ -64,8 +62,7 @@ test('Marker', (t) => {
     });
 
     t.test('popups can be bound to marker instance', (t) => {
-        t.stub(console, 'warn');
-        const map = createMap();
+        const map = createMap(t);
         const popup = new Popup();
         const marker = new Marker(window.document.createElement('div')).setLngLat([-77.01866, 38.888]).addTo(map);
         marker.setPopup(popup);
@@ -74,8 +71,7 @@ test('Marker', (t) => {
     });
 
     t.test('popups can be unbound from a marker instance', (t) => {
-        t.stub(console, 'warn');
-        const map = createMap();
+        const map = createMap(t);
         const marker = new Marker(window.document.createElement('div')).setLngLat([-77.01866, 38.888]).addTo(map);
         marker.setPopup(new Popup());
         t.ok(marker.getPopup() instanceof Popup);
@@ -85,8 +81,7 @@ test('Marker', (t) => {
     });
 
     t.test('popups can be set before LngLat', (t) => {
-        t.stub(console, 'warn');
-        const map = createMap();
+        const map = createMap(t);
         const popup = new Popup();
         new Marker(window.document.createElement('div'))
             .setPopup(popup)
@@ -97,8 +92,7 @@ test('Marker', (t) => {
     });
 
     t.test('marker centered by default', (t) => {
-        t.stub(console, 'warn');
-        const map = createMap();
+        const map = createMap(t);
         const element = window.document.createElement('div');
         const marker = new Marker(element).setLngLat([0, 0]).addTo(map);
         const translate = Math.round(map.getContainer().offsetWidth / 2);
@@ -107,8 +101,7 @@ test('Marker', (t) => {
     });
 
     t.test('togglePopup returns Marker instance', (t) => {
-        t.stub(console, 'warn');
-        const map = createMap();
+        const map = createMap(t);
         const element = window.document.createElement('div');
         const marker = new Marker(element).setLngLat([0, 0]).addTo(map);
         marker.setPopup(new Popup());
@@ -117,8 +110,7 @@ test('Marker', (t) => {
     });
 
     t.test('marker\'s offset can be changed', (t) => {
-        t.stub(console, 'warn');
-        const map = createMap();
+        const map = createMap(t);
         const marker = new Marker(window.document.createElement('div')).setLngLat([-77.01866, 38.888]).addTo(map);
         const offset = marker.getOffset();
         t.ok(offset.x === 0 && offset.y === 0, 'default offset');

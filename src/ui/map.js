@@ -1388,16 +1388,20 @@ class Map extends Camera {
         return [width, height];
     }
 
+    _detectMissingCSS(): void {
+        const computedColor = window.getComputedStyle(this._missingCSSCanary).getPropertyValue('background-color');
+        if (computedColor !== 'rgb(250, 128, 114)') {
+            util.warnOnce('Missing Mapbox GL JS CSS: map may not display correctly.');
+        }
+    }
+
     _setupContainer() {
         const container = this._container;
         container.classList.add('mapboxgl-map');
 
         const missingCSSCanary = this._missingCSSCanary = DOM.create('div', 'mapboxgl-canary', container);
         missingCSSCanary.style.visibility = 'hidden';
-        const computedColor = window.getComputedStyle(missingCSSCanary).getPropertyValue('background-color');
-        if (computedColor !== 'rgb(250, 128, 114)') {
-            util.warnOnce('Missing Mapbox GL JS CSS: map may not display correctly.');
-        }
+        this._detectMissingCSS();
 
         const canvasContainer = this._canvasContainer = DOM.create('div', 'mapboxgl-canvas-container', container);
         if (this._interactive) {

@@ -6,21 +6,20 @@ const Map = require('../../../../src/ui/map');
 const DOM = require('../../../../src/util/dom');
 const simulate = require('mapbox-gl-js-test/simulate_interaction');
 
-function createMap() {
+function createMap(t) {
+    t.stub(Map.prototype, '_detectMissingCSS');
     return new Map({ container: DOM.create('div', '', window.document.body) });
 }
 
 test('Map#isRotating returns false by default', (t) => {
-    t.stub(console, 'warn');
-    const map = createMap();
+    const map = createMap(t);
     t.equal(map.isRotating(), false);
     map.remove();
     t.end();
 });
 
 test('Map#isRotating returns true during a camera rotate animation', (t) => {
-    t.stub(console, 'warn');
-    const map = createMap();
+    const map = createMap(t);
 
     map.on('rotatestart', () => {
         t.equal(map.isRotating(), true);
@@ -36,8 +35,7 @@ test('Map#isRotating returns true during a camera rotate animation', (t) => {
 });
 
 test('Map#isRotating returns true when drag rotating', (t) => {
-    t.stub(console, 'warn');
-    const map = createMap();
+    const map = createMap(t);
 
     map.on('rotatestart', () => {
         t.equal(map.isRotating(), true);

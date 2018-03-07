@@ -2,26 +2,13 @@
 
 const test = require('mapbox-gl-js-test').test;
 const window = require('../../../../src/util/window');
-const Map = require('../../../../src/ui/map');
+const createMap = require('../../../util').createMap;
 const FullscreenControl = require('../../../../src/ui/control/fullscreen_control');
-
-function createMap() {
-    const container = window.document.createElement('div');
-    return new Map({
-        container: container,
-        style: {
-            version: 8,
-            sources: {},
-            layers: []
-        }
-    });
-}
 
 test('FullscreenControl appears when fullscreen is enabled', (t) => {
     window.document.fullscreenEnabled = true;
-    t.stub(console, 'warn');
 
-    const map = createMap();
+    const map = createMap(t);
     const fullscreen = new FullscreenControl();
     map.addControl(fullscreen);
 
@@ -34,7 +21,7 @@ test('FullscreenControl does not appears when fullscreen is not enabled', (t) =>
 
     const consoleWarn = t.stub(console, 'warn');
 
-    const map = createMap();
+    const map = createMap(t);
     const fullscreen = new FullscreenControl();
     map.addControl(fullscreen);
 

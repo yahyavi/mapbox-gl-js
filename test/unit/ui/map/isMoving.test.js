@@ -7,21 +7,20 @@ const Map = require('../../../../src/ui/map');
 const DOM = require('../../../../src/util/dom');
 const simulate = require('mapbox-gl-js-test/simulate_interaction');
 
-function createMap() {
+function createMap(t) {
+    t.stub(Map.prototype, '_detectMissingCSS');
     return new Map({ container: DOM.create('div', '', window.document.body) });
 }
 
 test('Map#isMoving returns false by default', (t) => {
-    t.stub(console, 'warn');
-    const map = createMap();
+    const map = createMap(t);
     t.equal(map.isMoving(), false);
     map.remove();
     t.end();
 });
 
 test('Map#isMoving returns true during a camera zoom animation', (t) => {
-    t.stub(console, 'warn');
-    const map = createMap();
+    const map = createMap(t);
 
     map.on('zoomstart', () => {
         t.equal(map.isMoving(), true);
@@ -37,8 +36,7 @@ test('Map#isMoving returns true during a camera zoom animation', (t) => {
 });
 
 test('Map#isMoving returns true when drag panning', (t) => {
-    t.stub(console, 'warn');
-    const map = createMap();
+    const map = createMap(t);
 
     map.on('dragstart', () => {
         t.equal(map.isMoving(), true);
@@ -61,8 +59,7 @@ test('Map#isMoving returns true when drag panning', (t) => {
 });
 
 test('Map#isMoving returns true when drag rotating', (t) => {
-    t.stub(console, 'warn');
-    const map = createMap();
+    const map = createMap(t);
 
     map.on('rotatestart', () => {
         t.equal(map.isMoving(), true);
@@ -85,8 +82,7 @@ test('Map#isMoving returns true when drag rotating', (t) => {
 });
 
 test('Map#isMoving returns true when scroll zooming', (t) => {
-    t.stub(console, 'warn');
-    const map = createMap();
+    const map = createMap(t);
 
     map.on('zoomstart', () => {
         t.equal(map.isMoving(), true);
@@ -110,8 +106,7 @@ test('Map#isMoving returns true when scroll zooming', (t) => {
 });
 
 test('Map#isMoving returns true when drag panning and scroll zooming interleave', (t) => {
-    t.stub(console, 'warn');
-    const map = createMap();
+    const map = createMap(t);
 
     map.on('dragstart', () => {
         t.equal(map.isMoving(), true);
