@@ -340,7 +340,7 @@
     "lineMetrics": {
       "type": "boolean",
       "default": false,
-      "doc": "TODO whether to track line metrics"
+      "doc": "Whether to calculate line distance metrics. This is required for line layers that specify `line-gradient` values."
     }
   },
   "source_video": {
@@ -2966,7 +2966,7 @@
     },
     "line-gradient": {
       "type": "color",
-      "doc": "Defines a gradient with which to color a line feature. Can only be used with GeoJSON sources.",
+      "doc": "Defines a gradient with which to color a line feature. Can only be used with GeoJSON sources that specify `\"lineMetrics\": true`.",
       "function": "interpolated",
       "zoom-function": false,
       "property-function": false,
@@ -2977,6 +2977,12 @@
         },
         {
           "!": "line-pattern"
+        },
+        {
+          "source": "geojson",
+          "has": {
+            "lineMetrics": true
+          }
         }
       ],
       "sdk-support": {

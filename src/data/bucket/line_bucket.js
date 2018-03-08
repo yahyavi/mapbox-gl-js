@@ -162,7 +162,8 @@ class LineBucket implements Bucket {
             feature.properties.hasOwnProperty('$distance_end')) {
             lineDistances = {
                 start: feature.properties.$distance_start,
-                end: feature.properties.$distance_end
+                end: feature.properties.$distance_end,
+                tileTotal: undefined
             };
         }
 
@@ -182,7 +183,7 @@ class LineBucket implements Bucket {
         if (len < (isPolygon ? 3 : 2)) return;
 
         if (lineDistances) {
-            lineDistances.tile_total = calculateFullDistance(vertices, first, len);
+            lineDistances.tileTotal = calculateFullDistance(vertices, first, len);
         }
 
         if (join === 'bevel') miterLimit = 1.05;
@@ -458,15 +459,8 @@ class LineBucket implements Bucket {
         const indexArray = this.indexArray;
 
         if (distancesForScaling) {
-            // First scale line from tile units to [0, 2^15)
-            distance = this.scaleDistance(distance, distancesForScaling);
-            // Check to see if this vertex is going to be drawn across an edge,
-            // and if so, don't add square/round caps:
-            if (this.shouldClipAtEdge(currentVertex, distance)) {
-                round = false;
-                endLeft = 0;
-                endRight = 0;
-            }
+            // Scale line from tile units to [0, 2^15)
+            distance = scaleDistance(distance, distancesForScaling);
         }
 
         extrude = normal.clone();
@@ -521,7 +515,7 @@ class LineBucket implements Bucket {
         const layoutVertexArray = this.layoutVertexArray;
         const indexArray = this.indexArray;
 
-        if (distancesForScaling) distance = this.scaleDistance(distance, distancesForScaling);
+        if (distancesForScaling) distance = scaleDistance(distance, distancesForScaling);
 
         addLineVertex(layoutVertexArray, currentVertex, extrude, false, lineTurnsLeft, 0, distance);
         this.e3 = segment.vertexLength++;
@@ -536,19 +530,10 @@ class LineBucket implements Bucket {
             this.e1 = this.e3;
         }
     }
+}
 
-    scaleDistance(tileDistance: number, stats: Object) {
-        return ((tileDistance / stats.tile_total) * (stats.end - stats.start) + stats.start) * (MAX_LINE_DISTANCE - 1);
-    }
-
-    shouldClipAtEdge(vertex: Point, distance: number): boolean {
-        // We detect non-start/end tile edge vertices for gradient lines because
-        // we turn clipping off when there's no tile buffer (which we do in
-        // order to calcuate line distances correctly), and turn these into butt
-        // ends so they won't overlap with semitransparent neighbors.
-        if (distance === 0 || distance === MAX_LINE_DISTANCE - 1) return false;
-        return vertex.x === 0 || vertex.x === EXTENT || vertex.y === 0 || vertex.y === EXTENT;
-    }
+function scaleDistance(tileDistance: number, stats: Object) {
+    return ((tileDistance / stats.tileTotal) * (stats.end - stats.start) + stats.start) * (MAX_LINE_DISTANCE - 1);
 }
 
 function calculateFullDistance(vertices: Array<Point>, first: number, len: number) {
