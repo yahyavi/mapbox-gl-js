@@ -34,7 +34,9 @@ test('LRUCache - duplicate add', (t) => {
     cache.add('a', 'b');
     cache.add('a', 'c');
 
-    t.deepEqual(cache.keys(), ['a']);
+    t.deepEqual(cache.keys(), ['a', 'a']);
+    t.ok(cache.has('a'));
+    t.equal(cache.getAndRemove('a'), 'b');
     t.ok(cache.has('a'));
     t.equal(cache.getAndRemove('a'), 'c');
     t.end();
