@@ -24,7 +24,8 @@ import type {Bucket} from '../data/bucket';
 import type StyleLayer from '../style/style_layer';
 import type {WorkerTileResult} from './worker_source';
 import type DEMData from '../data/dem_data';
-import type {RGBAImage, AlphaImage} from '../util/image';
+import type {AlphaImage} from '../util/image';
+import type ImageAtlas from '../render/image_atlas';
 import type Mask from '../render/tile_mask';
 import type Context from '../gl/context';
 import type IndexBuffer from '../gl/index_buffer';
@@ -55,7 +56,7 @@ class Tile {
     uses: number;
     tileSize: number;
     buckets: {[string]: Bucket};
-    iconAtlasImage: ?RGBAImage;
+    iconAtlas: ?ImageAtlas;
     iconAtlasTexture: Texture;
     glyphAtlasImage: ?AlphaImage;
     glyphAtlasTexture: Texture;
@@ -172,8 +173,8 @@ class Tile {
             this.queryPadding = Math.max(this.queryPadding, painter.style.getLayer(bucket.layerIds[0]).queryRadius(bucket));
         }
 
-        if (data.iconAtlasImage) {
-            this.iconAtlasImage = data.iconAtlasImage;
+        if (data.iconAtlas) {
+            this.iconAtlas = data.iconAtlas;
         }
         if (data.glyphAtlasImage) {
             this.glyphAtlasImage = data.glyphAtlasImage;
@@ -224,9 +225,8 @@ class Tile {
 
         const gl = context.gl;
 
-        if (this.iconAtlasImage) {
-            this.iconAtlasTexture = new Texture(context, this.iconAtlasImage, gl.RGBA);
-            this.iconAtlasImage = null;
+        if (this.iconAtlas) {
+            this.iconAtlasTexture = new Texture(context, this.iconAtlas.image, gl.RGBA);
         }
 
         if (this.glyphAtlasImage) {
