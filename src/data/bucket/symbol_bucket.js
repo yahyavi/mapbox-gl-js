@@ -286,7 +286,6 @@ class SymbolBucket implements Bucket {
     collisionBox: CollisionBuffers;
     collisionCircle: CollisionBuffers;
     uploaded: boolean;
-    changed: boolean;
 
     constructor(options: BucketParameters<SymbolStyleLayer>) {
         this.collisionBoxArray = options.collisionBoxArray;
@@ -405,8 +404,8 @@ class SymbolBucket implements Bucket {
 
     update(states: FeatureStates, vtLayer: VectorTileLayer) {
         if (!this.stateDependentLayers.length) return;
-        this.changed = this.text.programConfigurations.updatePaintArrays(states, vtLayer, this.layers) ||
-                       this.icon.programConfigurations.updatePaintArrays(states, vtLayer, this.layers);
+        this.text.programConfigurations.updatePaintArrays(states, vtLayer, this.layers);
+        this.icon.programConfigurations.updatePaintArrays(states, vtLayer, this.layers);
     }
 
     isEmpty() {
@@ -414,7 +413,7 @@ class SymbolBucket implements Bucket {
     }
 
     uploadPending() {
-        return !this.uploaded || this.changed;
+        return !this.uploaded || this.text.programConfigurations.needsUpload || this.icon.programConfigurations.needsUpload;
     }
 
     upload(context: Context) {
@@ -422,10 +421,9 @@ class SymbolBucket implements Bucket {
             this.collisionBox.upload(context);
             this.collisionCircle.upload(context);
         }
-        this.text.upload(context, this.sortFeaturesByY, this.uploaded && this.changed);
-        this.icon.upload(context, this.sortFeaturesByY, this.uploaded && this.changed);
+        this.text.upload(context, this.sortFeaturesByY, this.uploaded && this.text.programConfigurations.needsUpload);
+        this.icon.upload(context, this.sortFeaturesByY, this.uploaded && this.icon.programConfigurations.needsUpload);
         this.uploaded = true;
-        this.changed = false;
     }
 
     destroy() {
