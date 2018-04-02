@@ -43,6 +43,7 @@ class SourceCache extends Evented {
     _sourceLoaded: boolean;
     _sourceErrored: boolean;
     _tiles: {[any]: Tile};
+    _prevLng: number;
     _cache: Cache<Tile>;
     _timers: {[any]: TimeoutID};
     _cacheTimers: {[any]: TimeoutID};
@@ -392,6 +393,27 @@ class SourceCache extends Evented {
         this._cache.setMaxSize(maxSize);
     }
 
+    handleWrapJump(lng: number) {
+        // Wrapping longitude values can cause a jump in `wrap` values. Tiles that
+        // cover a similar area of the screen can have different wrap values. This
+        // calculates this difference in wrap values so that we can match tiles
+        // across frames where the longitude gets wrapped.
+        const prevLng = this._prevLng === undefined ? lng : this._prevLng;
+        const wrapDelta = Math.round((lng - prevLng) / 360);
+        this._prevLng = lng;
+
+        if (wrapDelta) {
+            const tiles = {};
+            for (const key in this._tiles) {
+                const tile = this._tiles[key];
+                tile.tileID = tile.tileID.unwrapTo(tile.tileID.wrap + wrapDelta);
+                tiles[tile.tileID.key] = tile;
+            }
+            this._tiles = tiles;
+            this._resetTileReloadTimers();
+        }
+    }
+
     /**
      * Removes tiles that are outside the viewport and adds new tiles that
      * are inside the viewport.
@@ -401,6 +423,8 @@ class SourceCache extends Evented {
         if (!this._sourceLoaded || this._paused) { return; }
 
         this.updateCacheSize(transform);
+        this.handleWrapJump(this.transform.center.lng);
+
         // Covered is a list of retained tiles who's areas are fully covered by other,
         // better, retained tiles. They are not drawn separately.
         this._coveredTiles = {};
@@ -573,12 +597,12 @@ class SourceCache extends Evented {
         tile = this._cache.getAndRemove((tileID.wrapped().key: any));
         if (tile) {
             // set the tileID because the cached tile could have had a different wrap value
-            tile.tileID = tileID;
             if (this._cacheTimers[tileID.key]) {
                 clearTimeout(this._cacheTimers[tileID.key]);
                 delete this._cacheTimers[tileID.key];
                 this._setTileReloadTimer(tileID.key, tile);
             }
+            tile.tileID = tileID;
         }
 
         const cached = Boolean(tile);
@@ -609,6 +633,17 @@ class SourceCache extends Evented {
                 this._reloadTile(id, 'expired');
                 delete this._timers[id];
             }, expiryTimeout);
+        }
+    }
+
+    _resetTileReloadTimers() {
+        for (const id in this._timers) {
+            clearTimeout(this._timers[id]);
+            delete this._timers[id];
+        }
+        for (const id in this._tiles) {
+            const tile = this._tiles[id];
+            this._setTileReloadTimer(id, tile);
         }
     }
 
