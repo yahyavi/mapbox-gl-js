@@ -119,7 +119,7 @@ class LRUCache<T> {
     get(key: string): ?T {
         if (!this.has(key)) { return null; }
 
-        const data = this.data[key].pop();
+        const data = this.data[key][0];
         return data;
     }
 

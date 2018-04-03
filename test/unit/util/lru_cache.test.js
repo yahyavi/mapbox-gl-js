@@ -23,6 +23,7 @@ test('LRUCache - getWithoutRemoving', (t) => {
     t.equal(cache.add('washington', 'dc'), cache, '.add()');
     t.equal(cache.get('washington'), 'dc', '.get()');
     t.deepEqual(cache.keys(), ['washington'], '.keys()');
+    t.equal(cache.get('washington'), 'dc', '.get()');
     t.end();
 });
 
