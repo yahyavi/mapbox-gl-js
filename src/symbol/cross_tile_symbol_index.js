@@ -140,7 +140,7 @@ class CrossTileSymbolLayerIndex {
                 for (const key in zoomIndexes) {
                     // change the tileID's wrap and add it to a new index
                     const index = zoomIndexes[key];
-                    index.tileID = index.tileID.unwrapTo(index.tileID.wrap - wrapDelta);
+                    index.tileID = index.tileID.unwrapTo(index.tileID.wrap + wrapDelta);
                     newZoomIndex[index.tileID.key] = index;
                 }
                 this.indexes[zoom] = newZoomIndex;
